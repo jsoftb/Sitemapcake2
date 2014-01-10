@@ -1,4 +1,16 @@
 <?php
+/**
+ * BlogPostCategories Controller
+ *
+ * Pretty much just baked admin actions except add/edit use generateTreeList()
+ * for finding the parents so you see the hierarchy.
+ *
+ * @author Neil Crookes <neil@crook.es>
+ * @link http://www.neilcrookes.com http://neil.crook.es
+ * @copyright (c) 2011 Neil Crookes
+ * @license MIT License - http://www.opensource.org/licenses/mit-license.php *
+ */
+
 //http://webdesign.about.com/od/localization/l/bllanguagecodes.htm
 App::uses('Component', 'Controller');
 
