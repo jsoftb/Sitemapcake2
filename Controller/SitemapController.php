@@ -13,11 +13,18 @@
 
 class SitemapController extends AppController {
 
+	public $components = array('Sitemapcake2.Sitemap');
+	
     public function index() {
 		Configure::write ('debug', 2);
 		$this->layout = 'Sitemapcake2.xml/default';
 		
-		$this->response->header(array('Content-type: text/xml'));
+		$this->set('urls', $this->Sitemap->getSitemap());
+		
+		
+		$this->set('xsdurl', Router::url("/Sitemapcake2/schema/sitemap.xsd", true));
+		
+		$this->response->type('xml');
     }
     
 }

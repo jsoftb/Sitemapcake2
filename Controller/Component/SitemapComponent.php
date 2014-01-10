@@ -21,21 +21,22 @@ class SitemapComponent extends Component {
 	 * @param string $controllername
 	 * @param array $excludeActions
 	 */
-	public function addController($controllername, $excludeActions = array(), $languages = array()) {
+	static public function addController($controllername, $excludeActions = array(), $languages = array()) {
 		
 	}
 	
 	/**
 	 * 
-	 * If no condition is given, it get all the records of a model
+	 * It gets all the records of a model
 	 * $allArticles = $modelName->find('all');
-	 * It must exists the Models' controller
+	 * The default action to build the url is view
 	 * 
-	 * @param Model $modelName
+	 * @param string $modelName
 	 * @param string $controllerName
+	 * @param string $action
 	 * @param array $languages
 	 */
-	public function addModel (Model $model, $controllerName, $languages = array()) {
+	static public function addModel ($model, $controllerName, $action = 'view', $languages = array()) {
 		
 	}
 	
@@ -45,6 +46,12 @@ class SitemapComponent extends Component {
 	 */
 	public function getSitemap($includeHome = true, $languages = array()) {
 		
+		$urls = array();
+		if ($includeHome) {
+			$urls[] = Router::url('/', true);
+		}
+		
+		return $urls;
 	}
 	
 }
