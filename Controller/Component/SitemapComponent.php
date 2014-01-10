@@ -1,5 +1,5 @@
 <?php
-
+//http://webdesign.about.com/od/localization/l/bllanguagecodes.htm
 App::uses('Component', 'Controller');
 
 class SitemapComponent extends Component {
@@ -9,7 +9,7 @@ class SitemapComponent extends Component {
 	 * @param string $controllername
 	 * @param array $excludeActions
 	 */
-	public function addController($controllername, $excludeActions = array()) {
+	public function addController($controllername, $excludeActions = array(), $languages = array()) {
 		
 	}
 	
@@ -20,14 +20,18 @@ class SitemapComponent extends Component {
 	 * It must exists the Models' controller
 	 * 
 	 * @param Model $modelName
-	 * @param array $conditions
+	 * @param string $controllerName
+	 * @param array $languages
 	 */
-	public function addModel ($modelName, $conditions = array()) {
+	public function addModel (Model $model, $controllerName, $languages = array()) {
 		
 	}
 	
-	
-	public function generateSitemap() {
+	/**
+	 * Returns the sitemap XML content 
+	 * @param boolean $includeHome
+	 */
+	public function getSitemap($includeHome = true, $languages = array()) {
 		
 	}
 	
