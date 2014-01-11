@@ -1,13 +1,13 @@
 <?php
 /**
- * BlogPostCategories Controller
+ * SitemapComponent Controller
  *
  * Pretty much just baked admin actions except add/edit use generateTreeList()
  * for finding the parents so you see the hierarchy.
  *
- * @author Neil Crookes <neil@crook.es>
- * @link http://www.neilcrookes.com http://neil.crook.es
- * @copyright (c) 2011 Neil Crookes
+ * @author Juan Gimenez <neojoda@gmail.com>
+ * @link http://www.montcat.org/portfolio
+ * @copyright (c) 2014 Juan Gimenez
  * @license MIT License - http://www.opensource.org/licenses/mit-license.php *
  */
 
@@ -15,6 +15,8 @@
 App::uses('Component', 'Controller');
 
 class SitemapComponent extends Component {
+	
+	private $urls = array();
 	
 	/**
 	 * 
@@ -46,12 +48,19 @@ class SitemapComponent extends Component {
 	 */
 	public function getSitemap($includeHome = true, $languages = array()) {
 		
-		$urls = array();
+		
 		if ($includeHome) {
-			$urls[] = Router::url('/', true);
+			$this->urls[] = Router::url('/', true);
 		}
 		
-		return $urls;
+		$controllers = Configure::read("Sitemapcake2.Controller");
+		if ( ($controllers !== null) && is_array($controllers)) {
+			foreach ($controllers as $controller) {
+				$this->addController($controller['name']);
+			}
+		}
+		
+		return $this->urls;
 	}
 	
 }
