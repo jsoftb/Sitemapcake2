@@ -4,7 +4,7 @@
 <?php 
 	if(!empty($urls)) {
 		foreach ($urls as $url) {
-			echo $this->element('Sitemapcake2.urlblock', array('url'=>$url, "changefreq"=>'daily', "priority" => "0.5"));
+			echo $this->element('Sitemapcake2.urlblock', array('url'=>$url, "changefreq"=>'daily', "priority" => "1.0"));
 		}
 	}
 ?>
