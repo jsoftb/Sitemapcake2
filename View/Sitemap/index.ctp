@@ -4,9 +4,12 @@
 <?php 
 	if(!empty($urls)) {
 		foreach ($urls as $url) {
-			echo $this->element('Sitemapcake2.urlblock', array('url'=>$url, "changefreq"=>'daily', "priority" => "1.0"));
+			
+			echo $this->element('Sitemapcake2.urlblock', array('url'        => $url['url'], 
+															   'altLoc'     => $url['altLoc'], 
+															   'changefreq' => 'daily', 
+															   'priority'   => '1.0'));
 		}
 	}
 ?>
-
 </urlset>

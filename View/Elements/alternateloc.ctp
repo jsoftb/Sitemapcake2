@@ -1,4 +1,5 @@
+<!-- http://googlewebmastercentral.blogspot.com/2012/05/multilingual-and-multinational-site.html -->
+<?php die($urlLoc); ?>
 <xhtml:link 
     	rel="alternate"
-    	hreflang="<?php echo $language; ?>"
-    	href="<?php echo $alternateUrl; ?>" />
+    	href="<?php echo $urlLoc; ?>" />

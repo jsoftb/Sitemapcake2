@@ -17,14 +17,32 @@ App::uses('Component', 'Controller');
 class SitemapComponent extends Component {
 	
 	private $urls = array();
+	private static $defaultExcludeActionsControllers = array("beforeFilter","__construct","__isset","__get","__set","setRequest","invokeAction","implementedEvents","constructClasses","getEventManager","startupProcess","shutdownProcess","httpCodes","loadModel","redirect","header","set","setAction","validate","validateErrors","render","referer","disableCache","flash","postConditions","paginate","beforeRender","beforeRedirect","afterFilter","beforeScaffold","afterScaffoldSave","afterScaffoldSaveError","scaffoldError","toString","requestAction","dispatchMethod","_stop","log","_set","_mergeVars");
+	private $alternateLoc = array();
 	
 	/**
 	 * 
 	 * @param string $controllername
 	 * @param array $excludeActions
+	 * @param array $alternateLoc
 	 */
-	static public function addController($controllername, $excludeActions = array(), $languages = array()) {
+	public function addController($controllername, $excludeActions = array()) {
 		
+		$excludeActions = array_merge($excludeActions, self::$defaultExcludeActionsControllers);
+		$controllername = str_replace('Controller', '', $controllername);
+		
+		if ($controllername == 'Pages') {
+			$excludeActions[] = 'display';
+		}
+		
+		App::import('Controller', $controllername);
+		$controllerMethods = get_class_methods($controllername."Controller");
+		
+		foreach ($controllerMethods as $key => $action) {
+			if (!in_array($action, $excludeActions) ) {
+				$this->_setUri("/Pages/".$action);
+			}
+		}
 	}
 	
 	/**
@@ -36,21 +54,21 @@ class SitemapComponent extends Component {
 	 * @param string $modelName
 	 * @param string $controllerName
 	 * @param string $action
-	 * @param array $languages
+	 * @param array $alternateLoc
 	 */
-	static public function addModel ($model, $controllerName, $action = 'view', $languages = array()) {
+	public function addModel ($model, $controllerName, $action = 'view') {
 		
 	}
 	
 	/**
 	 * Returns the sitemap XML content 
-	 * @param boolean $includeHome
 	 */
-	public function getSitemap($includeHome = true, $languages = array()) {
+	public function getSitemap($includeHome = true) {
 		
+		$this->alternateLoc = Configure::read("Sitemapcake2.AlternateLoc");
 		
 		if ($includeHome) {
-			$this->urls[] = Router::url('/', true);
+			$this->_setUri("/");
 		}
 		
 		$controllers = Configure::read("Sitemapcake2.Controller");
@@ -61,6 +79,35 @@ class SitemapComponent extends Component {
 		}
 		
 		return $this->urls;
+	}
+	
+	private function _setUri($uri) {
+		$key = count($this->urls);
+		
+		if(isset($this->alternateLoc['altLocs'])) {
+			
+			if (!isset($this->alternateLoc['position'])) {
+				$this->alternateLoc['position'] = "PREPEND";
+			}
+			
+			foreach ($this->alternateLoc['altLocs'] as $altLoc) {
+			
+				switch ($this->alternateLoc['position']) {
+					case "APPEND":
+						if ($uri !== "/") {
+							$this->urls[$key]['altLoc'][] = Router::url($uri."/".$altLoc, true);
+						} else {
+							$this->urls[$key]['altLoc'][] = Router::url("/".$altLoc, true);
+						}
+						break;
+					case "PREPEND":
+					default:
+						$this->urls[$key]['altLoc'][] = Router::url("/".$altLoc.$uri, true);
+						break;
+				}
+			}
+		}
+		$this->urls[$key]['url']= Router::url($uri, true);
 	}
 	
 }
