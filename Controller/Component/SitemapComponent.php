@@ -83,7 +83,7 @@ class SitemapComponent extends Component {
 		$this->alternateLoc = Configure::read("Sitemapcake2.AlternateLoc");
 		
 		if ($includeHome) {
-			$this->urls[]['url'] = Router::url("/", true);
+			$this->_setUri(Router::parse('/'), true);
 		}
 		
 		$this->_loadControllers();
@@ -116,7 +116,7 @@ class SitemapComponent extends Component {
 		}
 	}
 	
-	private function _setUri($uri) {
+	private function _setUri($uri, $isHome = false) {
 		$key = count($this->urls);
 		
 		if(isset($this->alternateLoc['altLocs'])) {	
@@ -128,7 +128,12 @@ class SitemapComponent extends Component {
 				$keyAltLoc++;
 			}
 		}
-		$this->urls[$key]['url']= Router::url($uri, true);
+		
+		if($isHome) {
+			$this->urls[$key]['url']= Router::url("/", true);
+		} else {
+			$this->urls[$key]['url']= Router::url($uri, true);
+		}
 	}
 	
 }
