@@ -68,12 +68,13 @@ class SitemapComponent extends Component {
 	 * @param string $action
 	 * @param array $alternateLoc
 	 */
-	public function addModel ($modelName, $controllerName, $action = 'view', $idField = 'id') {
-		
-		//$model->find("all");
-		
+	public function addModel ($modelName, $controllerName, $action = 'view', $idField = 'id', $conditions = array()) {
+			
 		$this->modelToUse = ClassRegistry::init($modelName);
-		$results = $this->modelToUse->find("all", array("fields"=>array($modelName.".".$idField)));
+		
+		
+		$results = $this->modelToUse->find("all", array("fields"=>array($modelName.".".$idField),
+														"conditions" => $conditions));
 
 		foreach($results as $result) {
 			$url['controller'] = strtolower($controllerName);
@@ -121,7 +122,9 @@ class SitemapComponent extends Component {
 		
 				$view = (isset($model['action']) ? $model['action'] : 'view');
 				$idField = (isset($model['idField']) ? $model['idField'] : 'id');
-				$this->addModel($model['name'], $model['controller'], $view, $idField);
+				$conditions = (isset($model['conditions']) ? $model['conditions'] : array());
+				
+				$this->addModel($model['name'], $model['controller'], $view, $idField, $conditions);
 			}
 		}
 	}
