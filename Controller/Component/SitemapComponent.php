@@ -19,28 +19,28 @@ class SitemapComponent extends Component {
 	private $urls = array();
 	private static $defaultExcludeActionsControllers = array("beforeFilter","__construct","__isset","__get","__set","setRequest","invokeAction","implementedEvents","constructClasses","getEventManager","startupProcess","shutdownProcess","httpCodes","loadModel","redirect","header","set","setAction","validate","validateErrors","render","referer","disableCache","flash","postConditions","paginate","beforeRender","beforeRedirect","afterFilter","beforeScaffold","afterScaffoldSave","afterScaffoldSaveError","scaffoldError","toString","requestAction","dispatchMethod","_stop","log","_set","_mergeVars");
 	private $alternateLoc = array();
+	private $modelToUse;
 	
 	/**
 	 * 
-	 * @param string $controllername
+	 * @param string $controllerName
 	 * @param array $excludeActions
 	 * @param array $alternateLoc
 	 */
-	public function addController($controllername, $excludeActions = array()) {
+	public function addController($controllerName, $excludeActions = array()) {
 		
 		$excludeActions = array_merge($excludeActions, self::$defaultExcludeActionsControllers);
-		$controllername = str_replace('Controller', '', $controllername);
 		
-		if ($controllername == 'Pages') {
+		if ($controllerName == 'Pages') {
 			$excludeActions[] = 'display';
 		}
 		
-		App::import('Controller', $controllername);
-		$controllerMethods = get_class_methods($controllername."Controller");
+		App::import('Controller', $controllerName);
+		$controllerMethods = get_class_methods($controllerName."Controller");
 		
 		foreach ($controllerMethods as $key => $action) {
 			if (!in_array($action, $excludeActions) ) {
-				$this->_setUri("/Pages/".$action);
+				$this->_setUri("/".$controllerName."/".$action);
 			}
 		}
 	}
@@ -56,7 +56,15 @@ class SitemapComponent extends Component {
 	 * @param string $action
 	 * @param array $alternateLoc
 	 */
-	public function addModel ($model, $controllerName, $action = 'view') {
+	public function addModel ($modelName, $controllerName, $action = 'view', $idField = 'id') {
+		
+		//$model->find("all");
+		
+		$this->modelToUse = ClassRegistry::init($modelName);
+		$results = $this->modelToUse->find("all");
+		foreach($results as $result) {
+			$this->_setUri("/".$controllerName."/".$action."/".$result[$modelName][$idField]);
+		}
 		
 	}
 	
@@ -74,10 +82,22 @@ class SitemapComponent extends Component {
 		$controllers = Configure::read("Sitemapcake2.Controller");
 		if ( ($controllers !== null) && is_array($controllers)) {
 			foreach ($controllers as $controller) {
-				$this->addController($controller['name']);
+				$excludeActions = (isset($controller['excludeActions']) ? $controller['excludeActions'] : array());
+				
+				$this->addController($controller['name'], $excludeActions);
 			}
 		}
 		
+		$models = Configure::read("Sitemapcake2.Model");
+		if ( ($models !== null) && is_array($models)) {
+			foreach ($models as $model) {
+				
+				$view = (isset($model['action']) ? $model['action'] : 'view');
+				$idField = (isset($model['idField']) ? $model['idField'] : 'id');
+				
+				$this->addModel($model['name'], $model['controller'], $view, $idField);
+			}
+		}
 		return $this->urls;
 	}
 	
