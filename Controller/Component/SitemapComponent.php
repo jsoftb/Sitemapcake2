@@ -79,26 +79,35 @@ class SitemapComponent extends Component {
 			$this->_setUri("/");
 		}
 		
+		$this->_loadControllers();
+		$this->_loadModels();
+		
+		return $this->urls;
+	}
+	
+	private function _loadControllers() {
 		$controllers = Configure::read("Sitemapcake2.Controller");
 		if ( ($controllers !== null) && is_array($controllers)) {
 			foreach ($controllers as $controller) {
 				$excludeActions = (isset($controller['excludeActions']) ? $controller['excludeActions'] : array());
-				
+		
 				$this->addController($controller['name'], $excludeActions);
 			}
 		}
-		
+	}
+	
+	
+	private function _loadModels() {
 		$models = Configure::read("Sitemapcake2.Model");
 		if ( ($models !== null) && is_array($models)) {
 			foreach ($models as $model) {
-				
+		
 				$view = (isset($model['action']) ? $model['action'] : 'view');
 				$idField = (isset($model['idField']) ? $model['idField'] : 'id');
-				
+		
 				$this->addModel($model['name'], $model['controller'], $view, $idField);
 			}
 		}
-		return $this->urls;
 	}
 	
 	private function _setUri($uri) {
