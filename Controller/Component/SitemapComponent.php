@@ -27,7 +27,7 @@ class SitemapComponent extends Component {
 	 * @param array $excludeActions
 	 * @param array $alternateLoc
 	 */
-	public function addController($controllerName, $excludeActions = array()) {
+	public function addController($controllerName, $excludeActions = array(), $includeActions = array()) {
 		
 		$excludeActions = array_merge($excludeActions, self::$defaultExcludeActionsControllers);
 		
@@ -43,7 +43,15 @@ class SitemapComponent extends Component {
 				$url['controller'] = strtolower($controllerName);
 				$url['action'] = $action;
 				$url['plugin'] = false;
-				
+				$this->_setUri($url);
+			}
+		}
+		
+		if(!empty($includeActions)) {
+			foreach ($includeActions as $action) {
+				$url['controller'] = strtolower($controllerName);
+				$url['action'] = $action;
+				$url['plugin'] = false;
 				$this->_setUri($url);
 			}
 		}
@@ -97,8 +105,9 @@ class SitemapComponent extends Component {
 		if ( ($controllers !== null) && is_array($controllers)) {
 			foreach ($controllers as $controller) {
 				$excludeActions = (isset($controller['excludeActions']) ? $controller['excludeActions'] : array());
+				$includeActions = (isset($controller['includeActions']) ? $controller['includeActions'] : array());
 		
-				$this->addController($controller['name'], $excludeActions);
+				$this->addController($controller['name'], $excludeActions, $includeActions);
 			}
 		}
 	}
