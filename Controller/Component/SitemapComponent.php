@@ -90,21 +90,24 @@ class SitemapComponent extends Component {
 				$this->alternateLoc['position'] = "PREPEND";
 			}
 			
+			$keyAltLoc = 0;
 			foreach ($this->alternateLoc['altLocs'] as $altLoc) {
-			
+			    
 				switch ($this->alternateLoc['position']) {
 					case "APPEND":
 						if ($uri !== "/") {
-							$this->urls[$key]['altLoc'][] = Router::url($uri."/".$altLoc, true);
+							$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url($uri."/".$altLoc['uri'], true);
 						} else {
-							$this->urls[$key]['altLoc'][] = Router::url("/".$altLoc, true);
+							$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url("/".$altLoc['uri'], true);
 						}
 						break;
 					case "PREPEND":
 					default:
-						$this->urls[$key]['altLoc'][] = Router::url("/".$altLoc.$uri, true);
+						$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url("/".$altLoc['uri'].$uri, true);
 						break;
 				}
+				$this->urls[$key]['altLoc'][$keyAltLoc]['hreflang'] = $altLoc['lang'];
+				$keyAltLoc++;
 			}
 		}
 		$this->urls[$key]['url']= Router::url($uri, true);
