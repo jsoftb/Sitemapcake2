@@ -19,7 +19,17 @@ class SitemapController extends AppController {
 		Configure::write ('debug', 2);
 		$this->layout = 'Sitemapcake2.xml/default';
 		$this->set('xsdurl', Router::url("/Sitemapcake2/schema/sitemap.xsd", true));
-		$this->set('urls', $this->Sitemap->getSitemap());
+		
+		
+		$options = Configure::read('Sitemapcake2.options');
+		$includeHome = true;
+		if (isset($options['includeHome'])) {
+			if (is_bool($options['includeHome'])) {
+				$includeHome = $options['includeHome'];
+			}
+		}
+		
+		$this->set('urls', $this->Sitemap->getSitemap($includeHome));
 		$this->response->type('xml');
     }
     
