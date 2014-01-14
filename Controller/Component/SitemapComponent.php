@@ -73,7 +73,8 @@ class SitemapComponent extends Component {
 		//$model->find("all");
 		
 		$this->modelToUse = ClassRegistry::init($modelName);
-		$results = $this->modelToUse->find("all");
+		$results = $this->modelToUse->find("all", array("fields"=>array($modelName.".".$idField)));
+
 		foreach($results as $result) {
 			$url['controller'] = strtolower($controllerName);
 			$url['plugin'] = false;
