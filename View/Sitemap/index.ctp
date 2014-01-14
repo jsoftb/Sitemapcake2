@@ -6,7 +6,7 @@
 	if(!empty($urls)) {
 		foreach ($urls as $url) {
 			echo $this->element('Sitemapcake2.urlblock', array('url'        => $url['url'], 
-															   'altLoc'     => $url['altLoc'], 
+															   'altLoc'     => (isset($url['altLoc']) ? $url['altLoc'] : array()), 
 															   'changefreq' => 'daily', 
 															   'priority'   => '1.0'));
 		}

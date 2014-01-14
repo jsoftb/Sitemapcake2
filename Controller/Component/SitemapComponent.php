@@ -83,7 +83,7 @@ class SitemapComponent extends Component {
 		$this->alternateLoc = Configure::read("Sitemapcake2.AlternateLoc");
 		
 		if ($includeHome) {
-			//$this->_setUri("/");
+			$this->urls[]['url'] = Router::url("/", true);
 		}
 		
 		$this->_loadControllers();
