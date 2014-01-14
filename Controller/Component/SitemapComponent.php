@@ -40,7 +40,11 @@ class SitemapComponent extends Component {
 		
 		foreach ($controllerMethods as $key => $action) {
 			if (!in_array($action, $excludeActions) ) {
-				$this->_setUri("/".$controllerName."/".$action);
+				$url['controller'] = strtolower($controllerName);
+				$url['action'] = $action;
+				$url['plugin'] = false;
+				
+				$this->_setUri($url);
 			}
 		}
 	}
@@ -125,7 +129,7 @@ class SitemapComponent extends Component {
 				switch ($this->alternateLoc['position']) {
 					case "APPEND":
 						if ($uri !== "/") {
-							$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url($uri."/".$altLoc['uri'], true);
+							$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url($uri, true);
 						} else {
 							$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url("/".$altLoc['uri'], true);
 						}
