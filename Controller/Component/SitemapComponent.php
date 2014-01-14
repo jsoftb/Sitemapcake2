@@ -67,7 +67,10 @@ class SitemapComponent extends Component {
 		$this->modelToUse = ClassRegistry::init($modelName);
 		$results = $this->modelToUse->find("all");
 		foreach($results as $result) {
-			$this->_setUri("/".$controllerName."/".$action."/".$result[$modelName][$idField]);
+			$url['controller'] = strtolower($controllerName);
+			$url['plugin'] = false;
+			$url['action'] = $action."/".$result[$modelName][$idField];
+			$this->_setUri($url);
 		}
 		
 	}
@@ -80,7 +83,7 @@ class SitemapComponent extends Component {
 		$this->alternateLoc = Configure::read("Sitemapcake2.AlternateLoc");
 		
 		if ($includeHome) {
-			$this->_setUri("/");
+			//$this->_setUri("/");
 		}
 		
 		$this->_loadControllers();
@@ -108,7 +111,6 @@ class SitemapComponent extends Component {
 		
 				$view = (isset($model['action']) ? $model['action'] : 'view');
 				$idField = (isset($model['idField']) ? $model['idField'] : 'id');
-		
 				$this->addModel($model['name'], $model['controller'], $view, $idField);
 			}
 		}
@@ -117,28 +119,11 @@ class SitemapComponent extends Component {
 	private function _setUri($uri) {
 		$key = count($this->urls);
 		
-		if(isset($this->alternateLoc['altLocs'])) {
-			
-			if (!isset($this->alternateLoc['position'])) {
-				$this->alternateLoc['position'] = "PREPEND";
-			}
-			
+		if(isset($this->alternateLoc['altLocs'])) {	
 			$keyAltLoc = 0;
 			foreach ($this->alternateLoc['altLocs'] as $altLoc) {
-			    
-				switch ($this->alternateLoc['position']) {
-					case "APPEND":
-						if ($uri !== "/") {
-							$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url($uri, true);
-						} else {
-							$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url("/".$altLoc['uri'], true);
-						}
-						break;
-					case "PREPEND":
-					default:
-						$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url("/".$altLoc['uri'].$uri, true);
-						break;
-				}
+			    $uriAltLoc = array_merge($uri,$altLoc['params']);
+				$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url($uriAltLoc, true);
 				$this->urls[$key]['altLoc'][$keyAltLoc]['hreflang'] = $altLoc['lang'];
 				$keyAltLoc++;
 			}
