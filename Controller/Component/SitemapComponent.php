@@ -98,6 +98,7 @@ class SitemapComponent extends Component {
 		
 		$this->_loadControllers();
 		$this->_loadModels();
+		$this->_loadManuals();
 		
 		return $this->urls;
 	}
@@ -129,6 +130,26 @@ class SitemapComponent extends Component {
 		}
 	}
 	
+	private function _loadManuals() {
+		$manuals = Configure::read("Sitemapcake2.Manual");
+		if (!empty($manuals)) {
+			foreach ($manuals as $manual) {
+				$keyAltLoc = 0;
+				$key = count($this->urls);
+				if (isset($manual['alternateLocs'])) {
+					foreach ($manual['alternateLocs'] as $altLoc) {
+						$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url($altLoc['uri'], true);
+						if(isset($altLoc['lang'])) {
+							$this->urls[$key]['altLoc'][$keyAltLoc]['hreflang'] = $altLoc['lang'];
+						}
+						$keyAltLoc++;
+					}
+				}
+				$this->urls[$key]['url']= Router::url($manual['uri'], true);
+			}
+		}
+	}
+	
 	private function _setUri($uri, $isHome = false) {
 		$key = count($this->urls);
 		
@@ -137,7 +158,9 @@ class SitemapComponent extends Component {
 			foreach ($this->alternateLoc['altLocs'] as $altLoc) {
 			    $uriAltLoc = array_merge($uri,$altLoc['params']);
 				$this->urls[$key]['altLoc'][$keyAltLoc]['uri'] = Router::url($uriAltLoc, true);
-				$this->urls[$key]['altLoc'][$keyAltLoc]['hreflang'] = $altLoc['lang'];
+				if(isset($altLoc['lang'])) {
+					$this->urls[$key]['altLoc'][$keyAltLoc]['hreflang'] = $altLoc['lang'];
+				}
 				$keyAltLoc++;
 			}
 		}
