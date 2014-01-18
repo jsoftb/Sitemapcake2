@@ -16,6 +16,9 @@ class SitemapController extends AppController {
 	public $components = array('Sitemapcake2.Sitemap');
 	
     public function index() {
+    	
+    	$this->_checkConfiguration();
+    	
 		Configure::write ('debug', 2);
 		$this->layout = 'Sitemapcake2.xml/default';
 		$this->set('xsdurl', Router::url("/Sitemapcake2/schema/sitemap.xsd", true));
@@ -31,6 +34,23 @@ class SitemapController extends AppController {
 		
 		$this->set('urls', $this->Sitemap->getSitemap($includeHome));
 		$this->response->type('xml');
+    }
+    
+    private function _checkConfiguration() {
+    	
+    	$alternateLocs = Configure::read('Sitemapcake2.AlternateLoc');
+    	if (!is_array($alternateLocs)) {
+    		throw new CakeException("Sitemapcake2.options must be an array");
+    	}
+    	
+    	if(!empty($alternateLocs)) {
+    		foreach ($alternateLocs['altLocs'] as $locs) {
+    			if(!isset($locs['lang'])) {
+    				throw new CakeException("Sitemapcake2.AlternateLoc needs to have define the lang option for every case");
+    			}
+    		}
+    	}
+    	
     }
     
 }
